@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExpenseTracker Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <h1>ExpenseTracker Pro</h1>
+                </div>
+                <p>Track your expenses with style</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="login-btn">
+                    <span>Login</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+            <div class="login-footer">
+                <p>Don't have an account? <a href="#" id="registerLink">Register</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="app-container hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <h1>ExpenseTracker Pro</h1>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="themeToggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="shareBtn" class="share-btn">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button id="profileBtn" class="profile-btn" aria-label="Open profile">
+                    <img id="profileAvatar" src="" alt="User avatar">
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Cards -->
+            <section class="dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card income-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Income</h3>
+                            <p class="stat-amount" id="totalIncome">$0.00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card expense-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Expenses</h3>
+                            <p class="stat-amount" id="totalExpenses">$0.00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card balance-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Balance</h3>
+                            <p class="stat-amount" id="balance">$0.00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card savings-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Savings Rate</h3>
+                            <p class="stat-amount" id="savingsRate">0%</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Action Buttons -->
+            <section class="actions">
+                <button id="addExpenseBtn" class="action-btn expense-btn">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Expense</span>
+                </button>
+                <button id="addIncomeBtn" class="action-btn income-btn">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Income</span>
+                </button>
+                <button id="viewReportsBtn" class="action-btn reports-btn">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>View Reports</span>
+                </button>
+                <button id="addSplitBtn" class="action-btn split-btn">
+                    <i class="fas fa-users"></i>
+                    <span>Split</span>
+                </button>
+            </section>
+
+            <!-- Transactions List -->
+            <section class="transactions">
+                <div class="section-header">
+                    <h2>Recent Transactions</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="income">Income</button>
+                        <button class="filter-btn" data-filter="expense">Expenses</button>
+                    </div>
+                </div>
+                <div class="transactions-list" id="transactionsList">
+                    <!-- Transactions will be dynamically added here -->
+                </div>
+            </section>
+
+            <!-- Split Overview -->
+            <section class="split-overview">
+                <div class="section-header split-header">
+                    <div>
+                        <h2>Splits</h2>
+                        <p id="splitLimitDisplay" class="split-limit-display">Limit: Not set</p>
+                    </div>
+                    <div class="split-limit-control">
+                        <label for="splitLimitInput">Owe limit</label>
+                        <div class="split-limit-input">
+                            <input type="number" id="splitLimitInput" min="0" step="0.01" placeholder="Enter limit">
+                            <button id="splitLimitSaveBtn" class="submit-btn secondary">Save</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="split-stats">
+                    <div class="split-card owed-card">
+                        <div>
+                            <p>People owe you</p>
+                            <h3 id="totalOwedAmount">$0.00</h3>
+                        </div>
+                        <i class="fas fa-arrow-circle-up"></i>
+                    </div>
+                    <div class="split-card owe-card">
+                        <div>
+                            <p>You owe others</p>
+                            <h3 id="totalOweAmount">$0.00</h3>
+                        </div>
+                        <i class="fas fa-arrow-circle-down"></i>
+                    </div>
+                </div>
+                <div class="split-lists">
+                    <div class="split-column">
+                        <div class="split-column-header">
+                            <h3>People who owe you</h3>
+                        </div>
+                        <div id="owedList" class="split-list">
+                            <!-- Owed entries -->
+                        </div>
+                    </div>
+                    <div class="split-column">
+                        <div class="split-column-header">
+                            <h3>People you owe</h3>
+                        </div>
+                        <div id="oweList" class="split-list">
+                            <!-- Owe entries -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Expense Modal -->
+    <div id="expenseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Expense</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="expenseForm" class="modal-form">
+                <div class="form-group">
+                    <label for="expenseTitle">Title</label>
+                    <input type="text" id="expenseTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseAmount">Amount</label>
+                    <input type="number" id="expenseAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseCategory">Category</label>
+                    <select id="expenseCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="rent">House Rent</option>
+                        <option value="emi">EMI / Loan</option>
+                        <option value="food">Food & Dining</option>
+                        <option value="transport">Transportation</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="bills">Bills & Utilities</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="education">Education</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="expenseDate">Date</label>
+                    <input type="date" id="expenseDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="expenseIsRecurring">
+                        <span class="checkmark"></span>
+                        Recurring Monthly (e.g., rent, EMI)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="expenseDescription">Description (Optional)</label>
+                    <textarea id="expenseDescription" rows="3"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Add Expense</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Income Modal -->
+    <div id="incomeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Income</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="incomeForm" class="modal-form">
+                <div class="form-group">
+                    <label for="incomeTitle">Title</label>
+                    <input type="text" id="incomeTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="incomeAmount">Amount</label>
+                    <input type="number" id="incomeAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="incomeType">Type</label>
+                    <select id="incomeType" required>
+                        <option value="">Select Type</option>
+                        <option value="salary">Salary</option>
+                        <option value="freelance">Freelance</option>
+                        <option value="investment">Investment</option>
+                        <option value="business">Business</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="incomeDate">Date</label>
+                    <input type="date" id="incomeDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="isRecurring">
+                        <span class="checkmark"></span>
+                        Recurring Monthly
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="incomeDescription">Description (Optional)</label>
+                    <textarea id="incomeDescription" rows="3"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Add Income</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Share Your Report</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="share-content">
+                <div class="share-options">
+                    <button class="share-option" id="shareText">
+                        <i class="fas fa-copy"></i>
+                        Copy Text Report
+                    </button>
+                    <button class="share-option" id="shareImage">
+                        <i class="fas fa-image"></i>
+                        Generate Image
+                    </button>
+                    <button class="share-option" id="shareEmail">
+                        <i class="fas fa-envelope"></i>
+                        Email Report
+                    </button>
+                </div>
+                <div class="share-preview" id="sharePreview">
+                    <!-- Share preview will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content profile-modal-content">
+            <div class="modal-header profile-modal-header">
+                <div>
+                    <h2>Your Profile</h2>
+                    <p id="profileIdText" class="profile-id-text">ID: --</p>
+                </div>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="profile-modal-body">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar-ring">
+                        <img id="profilePreview" src="" alt="Profile preview">
+                    </div>
+                    <label for="profileImageInput" class="upload-btn">
+                        <i class="fas fa-camera"></i>
+                        <span>Change Photo</span>
+                    </label>
+                    <input type="file" id="profileImageInput" accept="image/*">
+                    <p class="upload-hint">Supported: JPG/PNG up to 5MB</p>
+                </div>
+                <div class="profile-details">
+                    <div class="profile-field">
+                        <span class="field-label">Username</span>
+                        <span id="profileUsername" class="field-value">--</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">User ID</span>
+                        <span id="profileUserId" class="field-value">--</span>
+                    </div>
+                    <div class="profile-field">
+                        <label for="currencySelect" class="field-label">Currency</label>
+                        <select id="currencySelect" class="field-value currency-select">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="JPY">JPY (¥)</option>
+                            <option value="INR">INR (₹)</option>
+                            <option value="CAD">CAD (C$)</option>
+                            <option value="AUD">AUD (A$)</option>
+                            <option value="CNY">CNY (¥)</option>
+                            <option value="MXN">MXN ($)</option>
+                            <option value="BRL">BRL (R$)</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="logoutBtnProfile" class="logout-btn profile-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Split Modal -->
+    <div id="splitModal" class="modal">
+        <div class="modal-content split-modal-content">
+            <div class="modal-header">
+                <h2>Create Split</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="splitForm" class="modal-form">
+                <div class="form-group">
+                    <label for="splitTitle">Split Title</label>
+                    <input type="text" id="splitTitle" placeholder="Dinner, Utilities, etc." required>
+                </div>
+                <div class="form-group">
+                    <label for="splitAmount">Amount</label>
+                    <input type="number" id="splitAmount" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Counterparties</label>
+                    <div id="counterpartiesContainer" class="counterparties-container">
+                        <!-- Counterparty rows will be added dynamically -->
+                    </div>
+                    <button type="button" id="addCounterpartyBtn" class="add-counterparty-btn">
+                        <i class="fas fa-user-plus"></i>
+                        Add Person
+                    </button>
+                    <p class="split-hint">Total amount will be split evenly between all counterparties and you.</p>
+                </div>
+                <div class="form-group">
+                    <label>Split Method</label>
+                    <div class="split-mode-options">
+                        <label class="radio-chip">
+                            <input type="radio" name="splitMode" value="even" checked>
+                            <span>Split evenly</span>
+                        </label>
+                        <label class="radio-chip">
+                            <input type="radio" name="splitMode" value="manual">
+                            <span>Manual amounts</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="manualSplitSection" class="manual-split-section hidden">
+                    <div class="form-group">
+                        <label for="myShareAmount">My share</label>
+                        <input type="number" id="myShareAmount" min="0" step="0.01" value="0">
+                        <p class="split-hint">Manual mode: enter what each person owes you and optionally what portion you’re keeping.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="splitDate">Date</label>
+                    <input type="date" id="splitDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="splitDescription">Notes (Optional)</label>
+                    <textarea id="splitDescription" rows="3" placeholder="Add a note"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Who paid?</label>
+                    <div class="split-mode-options">
+                        <label class="radio-chip">
+                            <input type="radio" name="splitDirection" value="counterpartiesOweYou" checked>
+                            <span>You paid (others owe you)</span>
+                        </label>
+                        <label class="radio-chip">
+                            <input type="radio" name="splitDirection" value="youOweCounterparties">
+                            <span>Others paid (you owe others)</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="splitAddAsExpense">
+                        <span class="checkmark"></span>
+                        Add as expense
+                    </label>
+                </div>
+                <div id="splitExpenseCategorySection" class="form-group hidden">
+                    <label for="splitExpenseCategory">Expense Category</label>
+                    <select id="splitExpenseCategory">
+                        <option value="other">Other</option>
+                        <option value="food">Food & Dining</option>
+                        <option value="bills">Bills & Utilities</option>
+                        <option value="transport">Transportation</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="education">Education</option>
+                        <option value="rent">House Rent</option>
+                        <option value="emi">EMI / Loan</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Save Split</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
